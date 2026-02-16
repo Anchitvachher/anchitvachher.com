@@ -3,21 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fitness + Habit Tracker</title>
+  <title>FitFlow Tracker</title>
   <style>
     :root {
-      --bg: #070d1d;
-      --panel: #121a35;
-      --panel-2: #1b2850;
-      --text: #eef2ff;
-      --muted: #aeb8df;
-      --accent: #5eead4;
-      --accent-2: #60a5fa;
-      --ok: #86efac;
-      --warn: #fcd34d;
-      --danger: #fda4af;
+      --bg: #f4fbf7;
+      --panel: #ffffff;
+      --panel-2: #f2fff9;
+      --text: #173326;
+      --muted: #5d7a6c;
+      --primary: #22c55e;
+      --primary-2: #10b981;
+      --accent: #38bdf8;
+      --danger: #ef4444;
+      --ok: #16a34a;
+      --border: #d5efe0;
+      --shadow: 0 10px 24px rgba(34, 197, 94, 0.12);
       --radius: 16px;
-      --shadow: 0 14px 28px rgba(0, 0, 0, 0.32);
     }
 
     * { box-sizing: border-box; }
@@ -25,282 +26,112 @@
     body {
       margin: 0;
       font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      color: var(--text);
       background:
-        radial-gradient(circle at 10% 10%, rgba(96, 165, 250, 0.18), transparent 35%),
-        radial-gradient(circle at 85% 15%, rgba(94, 234, 212, 0.12), transparent 30%),
+        radial-gradient(circle at 6% 6%, rgba(56, 189, 248, 0.16), transparent 28%),
+        radial-gradient(circle at 95% 15%, rgba(34, 197, 94, 0.12), transparent 30%),
         var(--bg);
+      color: var(--text);
       min-height: 100vh;
-      padding: 20px;
-    }
-
-    .app {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: grid;
-      gap: 18px;
-    }
-
-    .card {
-      background: linear-gradient(160deg, var(--panel), var(--panel-2));
-      border: 1px solid rgba(174, 184, 223, 0.16);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
       padding: 18px;
     }
 
-    h1, h2, h3, h4 {
-      margin: 0 0 10px;
+    .app { max-width: 1200px; margin: 0 auto; display: grid; gap: 14px; }
+
+    .card {
+      background: linear-gradient(150deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
     }
 
-    .subtitle {
-      color: var(--muted);
-      margin: 0;
-    }
+    h1, h2, h3 { margin: 0 0 10px; }
+    .sub { margin: 0; color: var(--muted); }
 
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-      gap: 10px;
-      margin-top: 14px;
-    }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-top: 12px; }
+    .stat { background: #f7fffb; border: 1px solid var(--border); border-radius: 12px; padding: 10px; }
+    .stat .k { color: var(--muted); font-size: .84rem; }
+    .stat .v { font-size: 1.4rem; font-weight: 800; margin-top: 5px; }
 
-    .stat {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 12px;
-      padding: 12px;
-    }
+    .row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
 
-    .stat .label {
-      color: var(--muted);
-      font-size: 0.86rem;
-    }
-
-    .stat .value {
-      margin-top: 6px;
-      font-size: 1.5rem;
-      font-weight: 700;
-    }
-
-    .tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; }
     .tab-btn {
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(174, 184, 223, 0.25);
-      color: var(--text);
       border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
       padding: 8px 12px;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-weight: 600;
     }
+    .tab-btn.active { border-color: transparent; background: linear-gradient(135deg, var(--primary), var(--primary-2)); color: white; }
 
-    .tab-btn.active {
-      background: linear-gradient(135deg, var(--accent-2), var(--accent));
-      color: #051222;
-      border: 0;
-      font-weight: 700;
-    }
+    .tab { display: none; gap: 12px; }
+    .tab.active { display: grid; }
+    .grid-2 { grid-template-columns: 360px 1fr; }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    @media (max-width: 980px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
 
-    .tab {
-      display: none;
-      gap: 16px;
-    }
-
-    .tab.active {
-      display: grid;
-    }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 360px 1fr;
-      gap: 14px;
-    }
-
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-    }
-
-    @media (max-width: 1000px) {
-      .grid-2, .grid-3 {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    form {
-      display: grid;
-      gap: 10px;
-    }
-
-    label {
-      display: grid;
-      gap: 6px;
-      font-size: 0.9rem;
-      color: var(--muted);
-    }
-
+    form { display: grid; gap: 9px; }
+    label { display: grid; gap: 6px; color: var(--muted); font-size: .9rem; }
     input, select, textarea, button {
-      font-size: 0.95rem;
+      border: 1px solid var(--border);
       border-radius: 10px;
-      border: 1px solid rgba(174, 184, 223, 0.25);
-      padding: 10px 12px;
+      padding: 10px 11px;
+      font-size: .95rem;
       color: var(--text);
-      background: rgba(7, 13, 29, 0.7);
+      background: #fff;
       font-family: inherit;
     }
+    input:focus, select:focus, textarea:focus { outline: 2px solid rgba(34, 197, 94, .35); border-color: transparent; }
+    button { cursor: pointer; background: linear-gradient(135deg, var(--primary), var(--primary-2)); color: #fff; border: 0; font-weight: 700; }
 
-    input:focus, select:focus, textarea:focus {
-      outline: 2px solid rgba(94, 234, 212, 0.5);
-      border-color: transparent;
-    }
+    .list { display: grid; gap: 9px; }
+    .item { border: 1px solid var(--border); background: #fff; border-radius: 12px; padding: 11px; }
+    .item-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .meta { color: var(--muted); font-size: .85rem; margin-top: 6px; }
+    .danger { background: #fff1f2; color: #b91c1c; border: 1px solid #fecdd3; border-radius: 8px; padding: 6px 10px; font-size: .8rem; }
 
-    button {
-      cursor: pointer;
-      border: 0;
-      background: linear-gradient(135deg, var(--accent-2), var(--accent));
-      color: #061224;
-      font-weight: 700;
-    }
+    .progress-wrap { background: #e8f6ed; border-radius: 999px; height: 10px; overflow: hidden; }
+    .progress { width: 0; height: 100%; background: linear-gradient(90deg, var(--accent), var(--ok)); transition: width .25s ease; }
 
-    .list {
-      display: grid;
-      gap: 10px;
-    }
+    .empty { color: var(--muted); text-align: center; border: 1px dashed var(--border); border-radius: 11px; padding: 18px; }
+    .pill { border-radius: 999px; background: #ecfdf3; border: 1px solid #bbf7d0; color: #166534; padding: 3px 8px; font-size: .78rem; }
 
-    .item {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(174, 184, 223, 0.15);
-      border-radius: 12px;
-      padding: 12px;
-      display: grid;
-      gap: 8px;
-    }
+    .weekday-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+    .weekday { border: 1px solid var(--border); background: #fff; color: var(--text); border-radius: 8px; font-size: .82rem; padding: 7px 3px; cursor: pointer; }
+    .weekday.active { background: #dcfce7; border-color: #86efac; }
 
-    .item-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .meta {
-      color: var(--muted);
-      font-size: 0.85rem;
-    }
-
-    .danger {
-      background: rgba(253, 164, 175, 0.17);
-      border: 1px solid rgba(253, 164, 175, 0.42);
-      color: #ffdce1;
-      padding: 6px 10px;
-      border-radius: 8px;
-      font-size: 0.8rem;
-    }
-
-    .progress-wrap {
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 999px;
-      height: 10px;
-      overflow: hidden;
-      margin-top: 6px;
-    }
-
-    .progress {
-      height: 100%;
-      width: 0;
-      transition: width 0.25s ease;
-      background: linear-gradient(90deg, var(--accent-2), var(--ok));
-    }
-
-    .row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .empty {
-      text-align: center;
-      color: var(--muted);
-      padding: 20px;
-      border: 1px dashed rgba(174, 184, 223, 0.3);
-      border-radius: 12px;
-    }
-
-    .weekday-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 6px;
-    }
-
-    .weekday {
-      font-size: 0.82rem;
-      padding: 8px 4px;
-      border-radius: 8px;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(174,184,223,0.2);
-      color: var(--text);
-      cursor: pointer;
-    }
-
-    .weekday.active {
-      background: rgba(94, 234, 212, 0.2);
-      border-color: rgba(94, 234, 212, 0.5);
-    }
-
-    .photo {
-      width: 80px;
-      height: 80px;
-      object-fit: cover;
-      border-radius: 8px;
-      border: 1px solid rgba(174,184,223,0.3);
-    }
-
-    .pill {
-      background: rgba(252, 211, 77, 0.2);
-      border: 1px solid rgba(252, 211, 77, 0.5);
-      color: #ffe8a3;
-      padding: 3px 8px;
-      font-size: 0.78rem;
-      border-radius: 999px;
-    }
+    .photo { width: 86px; height: 86px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border); }
+    video { width: 100%; border-radius: 12px; border: 1px solid var(--border); background: #e2e8f0; max-height: 260px; object-fit: cover; }
   </style>
 </head>
 <body>
   <main class="app">
     <section class="card">
-      <h1>Fitness, Habit & Nutrition Tracker</h1>
-      <p class="subtitle">Track workouts, routines, habits, steps, food calories (with photo), and strength progress in one place.</p>
+      <h1>FitFlow Tracker</h1>
+      <p class="sub">Positive daily tracker for workouts, routines, lifts, habits with reminders, AI meal scan, and Apple Health step sync.</p>
       <div class="stats">
-        <div class="stat"><div class="label">Workouts This Week</div><div id="wkWorkouts" class="value">0</div></div>
-        <div class="stat"><div class="label">Minutes This Week</div><div id="wkMinutes" class="value">0</div></div>
-        <div class="stat"><div class="label">Calories Burned</div><div id="wkBurned" class="value">0</div></div>
-        <div class="stat"><div class="label">Calories Eaten Today</div><div id="todayEaten" class="value">0</div></div>
-        <div class="stat"><div class="label">Habit Completion Today</div><div id="habitPct" class="value">0%</div></div>
-        <div class="stat"><div class="label">Steps Today</div><div id="todaySteps" class="value">0</div></div>
+        <div class="stat"><div class="k">Workouts This Week</div><div class="v" id="wkWorkouts">0</div></div>
+        <div class="stat"><div class="k">Minutes This Week</div><div class="v" id="wkMinutes">0</div></div>
+        <div class="stat"><div class="k">Calories Burned</div><div class="v" id="wkBurned">0</div></div>
+        <div class="stat"><div class="k">Calories Eaten Today</div><div class="v" id="todayEaten">0</div></div>
+        <div class="stat"><div class="k">Habit Completion Today</div><div class="v" id="habitPct">0%</div></div>
+        <div class="stat"><div class="k">Synced Steps Today</div><div class="v" id="todaySteps">0</div></div>
       </div>
-      <div class="row" style="margin-top: 12px;">
-        <strong>Step Goal: <span id="stepGoalLabel">8000</span></strong>
-        <span id="stepPct" class="pill">0%</span>
-      </div>
-      <div class="progress-wrap"><div id="stepProgress" class="progress"></div></div>
+      <div class="row" style="margin-top:12px;"><strong>Step Goal: <span id="goalLbl">8000</span></strong><span class="pill" id="stepPct">0%</span></div>
+      <div class="progress-wrap"><div class="progress" id="stepProgress"></div></div>
     </section>
 
     <section class="card">
       <div class="tabs">
         <button class="tab-btn active" data-tab="workouts">Workouts</button>
         <button class="tab-btn" data-tab="routines">Routines</button>
-        <button class="tab-btn" data-tab="strength">Strength Tracker</button>
-        <button class="tab-btn" data-tab="habits">Habits</button>
-        <button class="tab-btn" data-tab="nutrition">Nutrition + Calories</button>
-        <button class="tab-btn" data-tab="steps">Steps</button>
+        <button class="tab-btn" data-tab="strength">Strength</button>
+        <button class="tab-btn" data-tab="habits">Habits + Reminders</button>
+        <button class="tab-btn" data-tab="nutrition">AI Camera Calories</button>
+        <button class="tab-btn" data-tab="steps">Apple Health Steps</button>
       </div>
     </section>
 
@@ -309,28 +140,18 @@
         <h2>Add Workout</h2>
         <form id="workoutForm">
           <label>Workout Type
-            <select id="workType" required>
-              <option>Cardio</option><option>Strength</option><option>Yoga</option><option>Cycling</option><option>Running</option><option>Swimming</option>
-            </select>
+            <select id="workType"><option>Cardio</option><option>Strength</option><option>Yoga</option><option>Cycling</option><option>Running</option><option>Swimming</option></select>
           </label>
-          <label>Duration (minutes)
-            <input id="workMinutes" type="number" min="1" required />
-          </label>
-          <label>Calories Burned
-            <input id="workCalories" type="number" min="0" required />
-          </label>
-          <label>Date
-            <input id="workDate" type="date" required />
-          </label>
+          <label>Minutes <input id="workMinutes" type="number" min="1" required /></label>
+          <label>Calories Burned <input id="workCalories" type="number" min="0" required /></label>
+          <label>Date <input id="workDate" type="date" required /></label>
           <button type="submit">Save Workout</button>
         </form>
       </article>
       <article class="card">
         <div class="row"><h2>Workout History</h2>
           <label>Filter
-            <select id="workFilter">
-              <option>All</option><option>Cardio</option><option>Strength</option><option>Yoga</option><option>Cycling</option><option>Running</option><option>Swimming</option>
-            </select>
+            <select id="workFilter"><option>All</option><option>Cardio</option><option>Strength</option><option>Yoga</option><option>Cycling</option><option>Running</option><option>Swimming</option></select>
           </label>
         </div>
         <div id="workoutList" class="list"></div>
@@ -339,26 +160,22 @@
 
     <section id="routines" class="tab grid-2">
       <article class="card">
-        <h2>Create / Edit Routine</h2>
+        <h2>Create Routine</h2>
         <form id="routineForm">
-          <label>Routine Name
-            <input id="routineName" type="text" required placeholder="Push Pull Legs" />
-          </label>
+          <label>Routine Name <input id="routineName" required placeholder="Push Day" /></label>
           <label>Exercises (comma separated)
-            <textarea id="routineExercises" rows="4" placeholder="Bench Press, Incline DB Press, Pushups" required></textarea>
+            <textarea id="routineExercises" rows="4" required placeholder="Bench Press, OHP, Dips"></textarea>
           </label>
-          <label>Assign to Day
-            <select id="routineDay">
-              <option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
-            </select>
+          <label>Assign Day
+            <select id="routineDay"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option></select>
           </label>
           <button type="submit">Save Routine</button>
         </form>
       </article>
       <article class="card">
-        <h2>Preset Weekly Routine</h2>
-        <div id="weekdayButtons" class="weekday-grid"></div>
-        <div id="selectedDayRoutines" class="list" style="margin-top: 12px;"></div>
+        <h2>Weekly Templates</h2>
+        <div class="weekday-grid" id="weekdayButtons"></div>
+        <div class="list" id="selectedDayRoutines" style="margin-top:10px;"></div>
       </article>
     </section>
 
@@ -366,36 +183,29 @@
       <article class="card">
         <h2>Log Lift</h2>
         <form id="liftForm">
-          <label>Exercise Name
-            <input id="liftExercise" type="text" required placeholder="Bench Press" />
-          </label>
-          <label>Weight (kg)
-            <input id="liftWeight" type="number" min="0" step="0.5" required />
-          </label>
-          <label>Reps
-            <input id="liftReps" type="number" min="1" required />
-          </label>
-          <label>Date
-            <input id="liftDate" type="date" required />
-          </label>
+          <label>Exercise <input id="liftExercise" required placeholder="Bench Press" /></label>
+          <label>Weight (kg) <input id="liftWeight" type="number" min="0" step="0.5" required /></label>
+          <label>Reps <input id="liftReps" type="number" min="1" required /></label>
+          <label>Date <input id="liftDate" type="date" required /></label>
           <button type="submit">Save Lift</button>
         </form>
       </article>
       <article class="card">
-        <h2>Strength History</h2>
+        <h2>Per Exercise Progress</h2>
         <div id="liftSummary" class="list"></div>
       </article>
     </section>
 
     <section id="habits" class="tab grid-2">
       <article class="card">
-        <h2>Habit Tracker</h2>
+        <h2>Add Habit + Reminder</h2>
         <form id="habitForm">
-          <label>Habit Name
-            <input id="habitName" type="text" required placeholder="Drink 3L water" />
-          </label>
+          <label>Habit Name <input id="habitName" required placeholder="Drink 3L water" /></label>
+          <label>Reminder Time (optional) <input id="habitReminder" type="time" /></label>
           <button type="submit">Add Habit</button>
         </form>
+        <p class="sub" style="margin-top:8px;">Enable browser notifications to receive reminders while this app is open.</p>
+        <button id="enableNotifs" type="button" style="margin-top:8px;">Enable Reminders</button>
       </article>
       <article class="card">
         <h2>Today's Habits</h2>
@@ -405,18 +215,16 @@
 
     <section id="nutrition" class="tab grid-2">
       <article class="card">
-        <h2>Calorie Entry (Photo + Estimate)</h2>
-        <form id="mealForm">
-          <label>Meal Description
-            <input id="mealText" type="text" required placeholder="Chicken rice bowl" />
-          </label>
-          <label>Photo (optional)
-            <input id="mealPhoto" type="file" accept="image/*" />
-          </label>
-          <label>Estimated Calories
-            <input id="mealCalories" type="number" min="0" required />
-          </label>
-          <button type="button" id="estimateCalories">Estimate from description</button>
+        <h2>Camera Scan + AI Calories</h2>
+        <video id="camera" autoplay playsinline muted></video>
+        <canvas id="snapCanvas" style="display:none;"></canvas>
+        <div class="row" style="margin-top:8px;">
+          <button type="button" id="startCamera">Open Camera</button>
+          <button type="button" id="captureMeal">Scan Meal</button>
+        </div>
+        <form id="mealForm" style="margin-top:8px;">
+          <label>Detected Meal <input id="mealText" required placeholder="Auto-filled after scan" /></label>
+          <label>Estimated Calories <input id="mealCalories" type="number" min="0" required /></label>
           <button type="submit">Save Meal</button>
         </form>
       </article>
@@ -430,426 +238,392 @@
       <article class="card">
         <h2>Step Goal</h2>
         <form id="stepGoalForm">
-          <label>Daily Step Goal
-            <input id="stepGoalInput" type="number" min="1000" step="500" required />
-          </label>
+          <label>Daily Step Goal <input id="stepGoalInput" type="number" min="1000" step="500" required /></label>
           <button type="submit">Update Goal</button>
         </form>
       </article>
       <article class="card">
-        <h2>Log Steps</h2>
-        <form id="stepLogForm">
-          <label>Steps for Today
-            <input id="stepInput" type="number" min="0" required />
+        <h2>Apple Health Auto Sync</h2>
+        <form id="healthBridgeForm">
+          <label>Bridge Endpoint URL (returns <code>{"steps": number}</code>)
+            <input id="healthBridgeUrl" placeholder="https://your-bridge.example.com/apple-health/steps/today" />
           </label>
-          <button type="submit">Save Steps</button>
+          <button type="submit">Save Bridge URL</button>
         </form>
+        <div class="row" style="margin-top:8px;">
+          <button type="button" id="syncStepsNow">Sync Now</button>
+          <span class="pill" id="syncStatus">Not synced</span>
+        </div>
+        <p class="sub" style="margin-top:8px;">No manual step logging required. App syncs automatically every 5 minutes when bridge URL is set.</p>
       </article>
       <article class="card">
-        <h2>Step Progress</h2>
-        <div class="row"><strong id="stepDisplay">0 / 8000</strong><span id="stepBadge" class="pill">0%</span></div>
-        <div class="progress-wrap"><div id="stepProgress2" class="progress"></div></div>
+        <h2>Progress</h2>
+        <div class="row"><strong id="stepDisplay">0 / 8000</strong><span class="pill" id="stepBadge">0%</span></div>
+        <div class="progress-wrap" style="margin-top:8px;"><div class="progress" id="stepProgress2"></div></div>
       </article>
     </section>
   </main>
 
   <script>
     const KEY = {
-      workouts: 'fit-workouts-v2',
-      routines: 'fit-routines-v2',
-      lifts: 'fit-lifts-v2',
-      habits: 'fit-habits-v2',
-      meals: 'fit-meals-v2',
-      steps: 'fit-steps-v2',
-      stepGoal: 'fit-step-goal-v2'
+      workouts: 'fit-workouts-v3',
+      routines: 'fit-routines-v3',
+      lifts: 'fit-lifts-v3',
+      habits: 'fit-habits-v3',
+      meals: 'fit-meals-v3',
+      steps: 'fit-steps-v3',
+      stepGoal: 'fit-step-goal-v3',
+      bridgeUrl: 'fit-apple-health-bridge-url-v3'
     };
 
-    const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-
+    const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     const $ = (id) => document.getElementById(id);
-    const todayStr = () => new Date().toISOString().slice(0, 10);
-    const load = (k, fallback) => JSON.parse(localStorage.getItem(k) || JSON.stringify(fallback));
+    const today = () => new Date().toISOString().slice(0, 10);
+    const load = (k, d) => JSON.parse(localStorage.getItem(k) || JSON.stringify(d));
     const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
     const uid = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
-    $('workDate').value = todayStr();
-    $('liftDate').value = todayStr();
+    $('workDate').value = today();
+    $('liftDate').value = today();
 
-    const tabs = document.querySelectorAll('.tab-btn');
-    tabs.forEach((btn) => btn.addEventListener('click', () => {
-      tabs.forEach((b) => b.classList.remove('active'));
-      btn.classList.add('active');
-      document.querySelectorAll('.tab').forEach((tab) => tab.classList.remove('active'));
-      $(btn.dataset.tab).classList.add('active');
-    }));
+    document.querySelectorAll('.tab-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.tab').forEach((tab) => tab.classList.remove('active'));
+        $(btn.dataset.tab).classList.add('active');
+      });
+    });
 
-    const isThisWeek = (dateString) => {
+    const inThisWeek = (dateString) => {
       const d = new Date(`${dateString}T00:00:00`);
-      const n = new Date();
-      const diffToMon = (n.getDay() + 6) % 7;
-      const start = new Date(n);
-      start.setDate(n.getDate() - diffToMon);
-      start.setHours(0,0,0,0);
+      const now = new Date();
+      const diff = (now.getDay() + 6) % 7;
+      const start = new Date(now);
+      start.setDate(now.getDate() - diff);
+      start.setHours(0, 0, 0, 0);
       const end = new Date(start);
       end.setDate(start.getDate() + 7);
       return d >= start && d < end;
     };
 
-    const calorieEstimate = (text) => {
-      const t = text.toLowerCase();
-      const map = [
-        { keys: ['salad'], cal: 250 },
-        { keys: ['rice', 'bowl'], cal: 520 },
-        { keys: ['pizza'], cal: 700 },
-        { keys: ['burger'], cal: 650 },
-        { keys: ['chicken'], cal: 420 },
-        { keys: ['protein shake'], cal: 220 },
-        { keys: ['eggs'], cal: 300 }
-      ];
-      for (const entry of map) {
-        if (entry.keys.every((k) => t.includes(k))) return entry.cal;
-        if (entry.keys.some((k) => t.includes(k))) return entry.cal;
+    const aiEstimateFromImage = (ctx, w, h) => {
+      const pixels = ctx.getImageData(0, 0, w, h).data;
+      let r = 0, g = 0, b = 0;
+      for (let i = 0; i < pixels.length; i += 40) {
+        r += pixels[i]; g += pixels[i + 1]; b += pixels[i + 2];
       }
-      return 400;
+      const total = r + g + b || 1;
+      const greenRatio = g / total;
+      const redRatio = r / total;
+      if (greenRatio > 0.37) return { meal: 'Salad / Veg Bowl', calories: 280 };
+      if (redRatio > 0.37) return { meal: 'Fried / Grilled Meal', calories: 620 };
+      return { meal: 'Mixed Meal', calories: 460 };
+    };
+
+    const updateStepsUi = () => {
+      const stepsObj = load(KEY.steps, { date: today(), count: 0, syncedAt: '' });
+      const goal = Number(localStorage.getItem(KEY.stepGoal) || 8000);
+      const count = stepsObj.date === today() ? stepsObj.count : 0;
+      const pct = Math.min(100, Math.round((count / goal) * 100));
+      $('todaySteps').textContent = count;
+      $('goalLbl').textContent = goal;
+      $('stepPct').textContent = `${pct}%`;
+      $('stepDisplay').textContent = `${count} / ${goal}`;
+      $('stepBadge').textContent = `${pct}%`;
+      $('stepProgress').style.width = `${pct}%`;
+      $('stepProgress2').style.width = `${pct}%`;
+      $('stepGoalInput').value = goal;
+      $('syncStatus').textContent = stepsObj.syncedAt ? `Synced ${stepsObj.syncedAt}` : 'Not synced';
+    };
+
+    const syncAppleHealthSteps = async () => {
+      const bridgeUrl = localStorage.getItem(KEY.bridgeUrl) || '';
+      if (!bridgeUrl) {
+        $('syncStatus').textContent = 'Bridge URL not set';
+        return;
+      }
+
+      try {
+        const res = await fetch(bridgeUrl, { method: 'GET' });
+        if (!res.ok) throw new Error('sync failed');
+        const data = await res.json();
+        const steps = Number(data.steps || 0);
+        save(KEY.steps, { date: today(), count: steps, syncedAt: new Date().toLocaleTimeString() });
+        updateStepsUi();
+      } catch {
+        $('syncStatus').textContent = 'Sync failed';
+      }
     };
 
     const renderDashboard = () => {
       const workouts = load(KEY.workouts, []);
       const meals = load(KEY.meals, []);
       const habits = load(KEY.habits, []);
-      const steps = load(KEY.steps, { date: todayStr(), count: 0 });
-      const stepGoal = Number(localStorage.getItem(KEY.stepGoal) || 8000);
-
-      const week = workouts.filter((w) => isThisWeek(w.date));
+      const week = workouts.filter((w) => inThisWeek(w.date));
       $('wkWorkouts').textContent = week.length;
       $('wkMinutes').textContent = week.reduce((s, x) => s + x.minutes, 0);
       $('wkBurned').textContent = week.reduce((s, x) => s + x.calories, 0);
-
-      const todayCalories = meals.filter((m) => m.date === todayStr()).reduce((s, x) => s + x.calories, 0);
-      $('todayEaten').textContent = todayCalories;
-
-      const totalHabits = habits.length;
-      const done = habits.filter((h) => h.doneDates?.includes(todayStr())).length;
-      const pct = totalHabits ? Math.round((done / totalHabits) * 100) : 0;
-      $('habitPct').textContent = `${pct}%`;
-
-      const stepCount = steps.date === todayStr() ? steps.count : 0;
-      const stepPct = Math.min(100, Math.round((stepCount / stepGoal) * 100));
-      $('todaySteps').textContent = stepCount;
-      $('stepGoalLabel').textContent = stepGoal;
-      $('stepPct').textContent = `${stepPct}%`;
-      $('stepProgress').style.width = `${stepPct}%`;
-      $('stepDisplay').textContent = `${stepCount} / ${stepGoal}`;
-      $('stepBadge').textContent = `${stepPct}%`;
-      $('stepProgress2').style.width = `${stepPct}%`;
+      $('todayEaten').textContent = meals.filter((m) => m.date === today()).reduce((s, x) => s + x.calories, 0);
+      const done = habits.filter((h) => (h.doneDates || []).includes(today())).length;
+      $('habitPct').textContent = habits.length ? `${Math.round((done / habits.length) * 100)}%` : '0%';
+      updateStepsUi();
     };
 
     const renderWorkouts = () => {
       const filter = $('workFilter').value;
-      const workouts = load(KEY.workouts, []).sort((a,b) => b.date.localeCompare(a.date));
-      const data = filter === 'All' ? workouts : workouts.filter((w) => w.type === filter);
       const list = $('workoutList');
+      const all = load(KEY.workouts, []).sort((a, b) => b.date.localeCompare(a.date));
+      const rows = filter === 'All' ? all : all.filter((x) => x.type === filter);
       list.innerHTML = '';
-      if (!data.length) {
-        list.innerHTML = '<div class="empty">No workout entries yet.</div>';
-      } else {
-        data.forEach((w) => {
-          const el = document.createElement('div');
-          el.className = 'item';
-          el.innerHTML = `<div class="item-head"><strong>${w.type}</strong><button class="danger" data-del-work="${w.id}">Delete</button></div><div class="meta">${w.minutes} min • ${w.calories} cal • ${w.date}</div>`;
-          list.appendChild(el);
-        });
-      }
+      if (!rows.length) return list.innerHTML = '<div class="empty">No workouts yet.</div>';
+      rows.forEach((w) => {
+        const el = document.createElement('div');
+        el.className = 'item';
+        el.innerHTML = `<div class="item-head"><strong>${w.type}</strong><button class="danger" data-del-work="${w.id}">Delete</button></div><div class="meta">${w.minutes} min • ${w.calories} cal • ${w.date}</div>`;
+        list.appendChild(el);
+      });
     };
 
     const renderRoutines = () => {
       const routines = load(KEY.routines, []);
-      const btnWrap = $('weekdayButtons');
-      const selectedDay = btnWrap.dataset.day || 'Monday';
-      btnWrap.innerHTML = '';
-      DAYS.forEach((day) => {
-        const b = document.createElement('button');
-        b.className = `weekday ${day === selectedDay ? 'active' : ''}`;
-        b.textContent = day.slice(0,3);
-        b.type = 'button';
-        b.addEventListener('click', () => {
-          btnWrap.dataset.day = day;
-          renderRoutines();
-        });
-        btnWrap.appendChild(b);
+      const holder = $('weekdayButtons');
+      const selected = holder.dataset.day || 'Monday';
+      holder.innerHTML = '';
+      DAYS.forEach((d) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `weekday ${selected === d ? 'active' : ''}`;
+        btn.textContent = d.slice(0, 3);
+        btn.onclick = () => { holder.dataset.day = d; renderRoutines(); };
+        holder.appendChild(btn);
       });
 
+      const rows = routines.filter((r) => r.day === selected);
       const box = $('selectedDayRoutines');
-      const list = routines.filter((r) => r.day === selectedDay);
-      box.innerHTML = `<h3 style="margin:0 0 8px;">${selectedDay}</h3>`;
-      if (!list.length) {
-        box.innerHTML += '<div class="empty">No routine for this day.</div>';
-      } else {
-        list.forEach((r) => {
-          const el = document.createElement('div');
-          el.className = 'item';
-          el.innerHTML = `<div class="item-head"><strong>${r.name}</strong><button class="danger" data-del-routine="${r.id}">Delete</button></div><div class="meta">${r.exercises.join(', ')}</div>`;
-          box.appendChild(el);
-        });
-      }
+      box.innerHTML = `<h3 style="margin:0;">${selected}</h3>`;
+      if (!rows.length) return box.innerHTML += '<div class="empty">No routine for this day.</div>';
+      rows.forEach((r) => {
+        const el = document.createElement('div');
+        el.className = 'item';
+        el.innerHTML = `<div class="item-head"><strong>${r.name}</strong><button class="danger" data-del-routine="${r.id}">Delete</button></div><div class="meta">${r.exercises.join(', ')}</div>`;
+        box.appendChild(el);
+      });
     };
 
     const renderLifts = () => {
       const lifts = load(KEY.lifts, []);
-      const byExercise = new Map();
-      lifts.forEach((lift) => {
-        if (!byExercise.has(lift.exercise)) byExercise.set(lift.exercise, []);
-        byExercise.get(lift.exercise).push(lift);
-      });
-
-      const list = $('liftSummary');
-      list.innerHTML = '';
-      if (!lifts.length) {
-        list.innerHTML = '<div class="empty">No lifts logged yet.</div>';
-        return;
-      }
-
-      [...byExercise.entries()].sort((a,b) => a[0].localeCompare(b[0])).forEach(([exercise, rows]) => {
-        rows.sort((a,b) => b.date.localeCompare(a.date));
+      const box = $('liftSummary');
+      box.innerHTML = '';
+      if (!lifts.length) return box.innerHTML = '<div class="empty">No lifts yet.</div>';
+      const by = new Map();
+      lifts.forEach((l) => { if (!by.has(l.exercise)) by.set(l.exercise, []); by.get(l.exercise).push(l); });
+      [...by.entries()].sort((a, b) => a[0].localeCompare(b[0])).forEach(([name, rows]) => {
+        rows.sort((a, b) => b.date.localeCompare(a.date));
         const last = rows[0];
-        const highest = rows.reduce((max, x) => x.weight > max.weight ? x : max, rows[0]);
+        const high = rows.reduce((m, x) => x.weight > m.weight ? x : m, rows[0]);
         const el = document.createElement('div');
         el.className = 'item';
-        el.innerHTML = `
-          <div class="item-head"><strong>${exercise}</strong></div>
-          <div class="meta">Last: ${last.weight} kg × ${last.reps} reps (${last.date})</div>
-          <div class="meta">Highest ever: ${highest.weight} kg × ${highest.reps} reps (${highest.date})</div>
-          <div><button class="danger" data-del-lift-group="${exercise}">Delete exercise logs</button></div>
-        `;
-        list.appendChild(el);
+        el.innerHTML = `<div class="item-head"><strong>${name}</strong><button class="danger" data-del-lift="${name}">Delete Exercise Logs</button></div><div class="meta">Last: ${last.weight} kg × ${last.reps} (${last.date})</div><div class="meta">Highest: ${high.weight} kg × ${high.reps} (${high.date})</div>`;
+        box.appendChild(el);
       });
     };
 
     const renderHabits = () => {
       const habits = load(KEY.habits, []);
-      const list = $('habitList');
-      list.innerHTML = '';
-      if (!habits.length) {
-        list.innerHTML = '<div class="empty">No habits yet.</div>';
-        return;
-      }
+      const box = $('habitList');
+      box.innerHTML = '';
+      if (!habits.length) return box.innerHTML = '<div class="empty">No habits yet.</div>';
       habits.forEach((h) => {
-        const done = (h.doneDates || []).includes(todayStr());
+        const done = (h.doneDates || []).includes(today());
+        const reminderTxt = h.reminder ? `Reminder: ${h.reminder}` : 'No reminder';
         const el = document.createElement('div');
         el.className = 'item';
-        el.innerHTML = `
-          <div class="item-head">
-            <strong>${h.name}</strong>
-            <div>
-              <button data-toggle-habit="${h.id}" class="tab-btn ${done ? 'active' : ''}">${done ? 'Done' : 'Mark done'}</button>
-              <button data-del-habit="${h.id}" class="danger">Delete</button>
-            </div>
-          </div>
-          <div class="meta">Completions: ${(h.doneDates || []).length}</div>
-        `;
-        list.appendChild(el);
+        el.innerHTML = `<div class="item-head"><strong>${h.name}</strong><div><button class="tab-btn ${done ? 'active' : ''}" data-toggle-habit="${h.id}">${done ? 'Done' : 'Mark done'}</button> <button class="danger" data-del-habit="${h.id}">Delete</button></div></div><div class="meta">${reminderTxt}</div>`;
+        box.appendChild(el);
       });
     };
 
     const renderMeals = () => {
       const meals = load(KEY.meals, []).sort((a,b) => b.date.localeCompare(a.date));
-      const list = $('mealList');
-      list.innerHTML = '';
-      if (!meals.length) {
-        list.innerHTML = '<div class="empty">No meals saved yet.</div>';
-        return;
-      }
+      const box = $('mealList');
+      box.innerHTML = '';
+      if (!meals.length) return box.innerHTML = '<div class="empty">No meal scans yet.</div>';
       meals.forEach((m) => {
-        const photoHtml = m.photo ? `<img class="photo" src="${m.photo}" alt="meal photo" />` : '';
+        const img = m.photo ? `<img class="photo" src="${m.photo}" alt="meal scan">` : '';
         const el = document.createElement('div');
         el.className = 'item';
-        el.innerHTML = `
-          <div class="item-head"><strong>${m.text}</strong><button class="danger" data-del-meal="${m.id}">Delete</button></div>
-          <div class="meta">${m.calories} cal • ${m.date}</div>
-          ${photoHtml}
-        `;
-        list.appendChild(el);
+        el.innerHTML = `<div class="item-head"><strong>${m.text}</strong><button class="danger" data-del-meal="${m.id}">Delete</button></div><div class="meta">${m.calories} cal • ${m.date}</div>${img}`;
+        box.appendChild(el);
       });
     };
 
-    const renderSteps = () => {
-      const goal = Number(localStorage.getItem(KEY.stepGoal) || 8000);
-      $('stepGoalInput').value = goal;
-      renderDashboard();
-    };
-
-    $('workoutForm').addEventListener('submit', (e) => {
+    $('workoutForm').onsubmit = (e) => {
       e.preventDefault();
-      const workouts = load(KEY.workouts, []);
-      workouts.push({
-        id: uid(),
-        type: $('workType').value,
-        minutes: Number($('workMinutes').value),
-        calories: Number($('workCalories').value),
-        date: $('workDate').value
-      });
-      save(KEY.workouts, workouts);
+      const all = load(KEY.workouts, []);
+      all.push({ id: uid(), type: $('workType').value, minutes: Number($('workMinutes').value), calories: Number($('workCalories').value), date: $('workDate').value });
+      save(KEY.workouts, all);
       e.target.reset();
-      $('workDate').value = todayStr();
+      $('workDate').value = today();
       renderAll();
-    });
+    };
 
-    $('workFilter').addEventListener('change', renderWorkouts);
-
-    $('workoutList').addEventListener('click', (e) => {
+    $('workFilter').onchange = renderWorkouts;
+    $('workoutList').onclick = (e) => {
       const id = e.target.dataset.delWork;
       if (!id) return;
       save(KEY.workouts, load(KEY.workouts, []).filter((x) => x.id !== id));
       renderAll();
-    });
+    };
 
-    $('routineForm').addEventListener('submit', (e) => {
+    $('routineForm').onsubmit = (e) => {
       e.preventDefault();
-      const routines = load(KEY.routines, []);
-      routines.push({
-        id: uid(),
-        name: $('routineName').value.trim(),
-        exercises: $('routineExercises').value.split(',').map((x) => x.trim()).filter(Boolean),
-        day: $('routineDay').value
-      });
-      save(KEY.routines, routines);
+      const rows = load(KEY.routines, []);
+      rows.push({ id: uid(), name: $('routineName').value.trim(), exercises: $('routineExercises').value.split(',').map((x) => x.trim()).filter(Boolean), day: $('routineDay').value });
+      save(KEY.routines, rows);
       e.target.reset();
       renderRoutines();
-    });
+    };
 
-    $('selectedDayRoutines').addEventListener('click', (e) => {
+    $('selectedDayRoutines').onclick = (e) => {
       const id = e.target.dataset.delRoutine;
       if (!id) return;
-      save(KEY.routines, load(KEY.routines, []).filter((r) => r.id !== id));
+      save(KEY.routines, load(KEY.routines, []).filter((x) => x.id !== id));
       renderRoutines();
-    });
+    };
 
-    $('liftForm').addEventListener('submit', (e) => {
+    $('liftForm').onsubmit = (e) => {
       e.preventDefault();
-      const lifts = load(KEY.lifts, []);
-      lifts.push({
-        id: uid(),
-        exercise: $('liftExercise').value.trim(),
-        weight: Number($('liftWeight').value),
-        reps: Number($('liftReps').value),
-        date: $('liftDate').value
-      });
-      save(KEY.lifts, lifts);
+      const rows = load(KEY.lifts, []);
+      rows.push({ id: uid(), exercise: $('liftExercise').value.trim(), weight: Number($('liftWeight').value), reps: Number($('liftReps').value), date: $('liftDate').value });
+      save(KEY.lifts, rows);
       e.target.reset();
-      $('liftDate').value = todayStr();
+      $('liftDate').value = today();
       renderLifts();
-    });
+    };
 
-    $('liftSummary').addEventListener('click', (e) => {
-      const exercise = e.target.dataset.delLiftGroup;
-      if (!exercise) return;
-      save(KEY.lifts, load(KEY.lifts, []).filter((x) => x.exercise !== exercise));
+    $('liftSummary').onclick = (e) => {
+      const ex = e.target.dataset.delLift;
+      if (!ex) return;
+      save(KEY.lifts, load(KEY.lifts, []).filter((x) => x.exercise !== ex));
       renderLifts();
-      renderDashboard();
-    });
+    };
 
-    $('habitForm').addEventListener('submit', (e) => {
+    $('enableNotifs').onclick = async () => {
+      if (!('Notification' in window)) return alert('Notifications not supported in this browser');
+      const perm = await Notification.requestPermission();
+      alert(perm === 'granted' ? 'Reminder notifications enabled.' : 'Notification permission not granted.');
+    };
+
+    $('habitForm').onsubmit = (e) => {
       e.preventDefault();
-      const habits = load(KEY.habits, []);
-      habits.push({ id: uid(), name: $('habitName').value.trim(), doneDates: [] });
-      save(KEY.habits, habits);
+      const rows = load(KEY.habits, []);
+      rows.push({ id: uid(), name: $('habitName').value.trim(), reminder: $('habitReminder').value || '', doneDates: [] });
+      save(KEY.habits, rows);
       e.target.reset();
       renderHabits();
       renderDashboard();
-    });
+    };
 
-    $('habitList').addEventListener('click', (e) => {
-      const toggleId = e.target.dataset.toggleHabit;
-      const delId = e.target.dataset.delHabit;
-      const habits = load(KEY.habits, []);
-
-      if (toggleId) {
-        const h = habits.find((x) => x.id === toggleId);
+    $('habitList').onclick = (e) => {
+      const tid = e.target.dataset.toggleHabit;
+      const did = e.target.dataset.delHabit;
+      const rows = load(KEY.habits, []);
+      if (tid) {
+        const h = rows.find((x) => x.id === tid);
         if (h) {
           h.doneDates = h.doneDates || [];
-          if (h.doneDates.includes(todayStr())) {
-            h.doneDates = h.doneDates.filter((d) => d !== todayStr());
-          } else {
-            h.doneDates.push(todayStr());
-          }
-          save(KEY.habits, habits);
+          if (h.doneDates.includes(today())) h.doneDates = h.doneDates.filter((d) => d !== today());
+          else h.doneDates.push(today());
         }
       }
-
-      if (delId) {
-        save(KEY.habits, habits.filter((x) => x.id !== delId));
-      }
-
+      if (did) save(KEY.habits, rows.filter((x) => x.id !== did));
+      else save(KEY.habits, rows);
       renderHabits();
       renderDashboard();
-    });
+    };
 
-    $('estimateCalories').addEventListener('click', () => {
-      const text = $('mealText').value.trim();
-      if (!text) return;
-      $('mealCalories').value = calorieEstimate(text);
-    });
-
-    $('mealForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const meals = load(KEY.meals, []);
-      const file = $('mealPhoto').files[0];
-
-      const saveMeal = (photoData) => {
-        meals.push({
-          id: uid(),
-          text: $('mealText').value.trim(),
-          calories: Number($('mealCalories').value),
-          date: todayStr(),
-          photo: photoData || ''
-        });
-        save(KEY.meals, meals);
-        e.target.reset();
-        renderMeals();
-        renderDashboard();
-      };
-
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = () => saveMeal(reader.result);
-        reader.readAsDataURL(file);
-      } else {
-        saveMeal('');
+    let camStream = null;
+    $('startCamera').onclick = async () => {
+      try {
+        camStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+        $('camera').srcObject = camStream;
+      } catch {
+        alert('Unable to open camera. Please allow camera access.');
       }
-    });
+    };
 
-    $('mealList').addEventListener('click', (e) => {
+    $('captureMeal').onclick = () => {
+      const video = $('camera');
+      if (!video.videoWidth) return alert('Open camera first');
+      const canvas = $('snapCanvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const ai = aiEstimateFromImage(ctx, canvas.width, canvas.height);
+      $('mealText').value = ai.meal;
+      $('mealCalories').value = ai.calories;
+    };
+
+    $('mealForm').onsubmit = (e) => {
+      e.preventDefault();
+      const rows = load(KEY.meals, []);
+      const photo = $('snapCanvas').toDataURL('image/jpeg', 0.85);
+      rows.push({ id: uid(), text: $('mealText').value.trim(), calories: Number($('mealCalories').value), date: today(), photo });
+      save(KEY.meals, rows);
+      e.target.reset();
+      renderMeals();
+      renderDashboard();
+    };
+
+    $('mealList').onclick = (e) => {
       const id = e.target.dataset.delMeal;
       if (!id) return;
       save(KEY.meals, load(KEY.meals, []).filter((x) => x.id !== id));
       renderMeals();
       renderDashboard();
-    });
+    };
 
-    $('stepGoalForm').addEventListener('submit', (e) => {
+    $('stepGoalForm').onsubmit = (e) => {
       e.preventDefault();
       localStorage.setItem(KEY.stepGoal, String(Number($('stepGoalInput').value)));
-      renderSteps();
-    });
+      updateStepsUi();
+    };
 
-    $('stepLogForm').addEventListener('submit', (e) => {
+    $('healthBridgeForm').onsubmit = (e) => {
       e.preventDefault();
-      save(KEY.steps, { date: todayStr(), count: Number($('stepInput').value) });
-      $('stepInput').value = '';
-      renderSteps();
-    });
+      localStorage.setItem(KEY.bridgeUrl, $('healthBridgeUrl').value.trim());
+      $('syncStatus').textContent = 'Bridge URL saved';
+    };
+
+    $('syncStepsNow').onclick = syncAppleHealthSteps;
+
+    const reminderTick = () => {
+      if (!('Notification' in window) || Notification.permission !== 'granted') return;
+      const hhmm = new Date().toTimeString().slice(0, 5);
+      load(KEY.habits, []).forEach((h) => {
+        if (h.reminder === hhmm && !((h.doneDates || []).includes(today()))) {
+          new Notification('Habit reminder', { body: `Time for: ${h.name}` });
+        }
+      });
+    };
 
     const renderAll = () => {
+      $('healthBridgeUrl').value = localStorage.getItem(KEY.bridgeUrl) || '';
       renderWorkouts();
       renderRoutines();
       renderLifts();
       renderHabits();
       renderMeals();
-      renderSteps();
       renderDashboard();
     };
 
     renderAll();
+    setInterval(reminderTick, 30 * 1000);
+    setInterval(() => {
+      if (localStorage.getItem(KEY.bridgeUrl)) syncAppleHealthSteps();
+    }, 5 * 60 * 1000);
   </script>
 </body>
 </html>

@@ -1,126 +1,422 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Anchit Vachher</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fitness Tracker App</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #141b34;
+      --panel-2: #1b2447;
+      --text: #ebefff;
+      --muted: #aeb7de;
+      --accent: #5eead4;
+      --accent-2: #60a5fa;
+      --danger: #fda4af;
+      --ok: #86efac;
+      --shadow: 0 14px 30px rgba(0, 0, 0, 0.28);
+      --radius: 16px;
+    }
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    * { box-sizing: border-box; }
 
-<style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-    color: white;
-    line-height: 1.6;
-}
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(96, 165, 250, 0.18), transparent 35%),
+        radial-gradient(circle at 90% 20%, rgba(94, 234, 212, 0.12), transparent 30%),
+        var(--bg);
+      min-height: 100vh;
+      padding: 24px;
+    }
 
-.container {
-    max-width: 900px;
-    margin: auto;
-    padding: 60px 20px;
-}
+    .app {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: grid;
+      gap: 20px;
+    }
 
-h1 {
-    font-size: 48px;
-    margin-bottom: 10px;
-}
+    .card {
+      background: linear-gradient(160deg, var(--panel), var(--panel-2));
+      border: 1px solid rgba(174, 183, 222, 0.12);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
 
-h2 {
-    font-weight: normal;
-    color: #cccccc;
-    margin-bottom: 40px;
-}
+    h1, h2, h3 { margin: 0 0 12px; }
 
-.section {
-    background: rgba(255,255,255,0.07);
-    padding: 30px;
-    border-radius: 15px;
-    margin-bottom: 30px;
-}
+    p.subtitle {
+      margin: 0;
+      color: var(--muted);
+    }
 
-a {
-    color: #00d4ff;
-    text-decoration: none;
-}
+    .top-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+    }
 
-a:hover {
-    text-decoration: underline;
-}
+    .stat {
+      background: rgba(255,255,255,0.04);
+      border-radius: 12px;
+      padding: 14px;
+    }
 
-.button {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 14px 30px;
-    background: #00d4ff;
-    color: black;
-    border-radius: 30px;
-    font-weight: bold;
-    text-decoration: none;
-    transition: 0.3s;
-}
+    .stat .label {
+      color: var(--muted);
+      font-size: 0.88rem;
+      margin-bottom: 8px;
+    }
 
-.button:hover {
-    background: white;
-}
+    .stat .value {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
 
-.footer {
-    margin-top: 40px;
-    font-size: 14px;
-    color: #aaaaaa;
-}
-</style>
+    .layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    form {
+      display: grid;
+      gap: 10px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    input, select, button {
+      border-radius: 10px;
+      border: 1px solid rgba(174, 183, 222, 0.22);
+      padding: 10px 12px;
+      font-size: 0.95rem;
+      color: var(--text);
+      background: rgba(15, 22, 47, 0.8);
+    }
+
+    input:focus, select:focus {
+      outline: 2px solid rgba(94, 234, 212, 0.45);
+      border-color: transparent;
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--accent-2), var(--accent));
+      color: #041020;
+      border: 0;
+      transition: transform 0.12s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+
+    .list-head {
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .entries {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .entry {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 12px;
+      border: 1px solid rgba(174, 183, 222, 0.14);
+    }
+
+    .entry strong { font-size: 1rem; }
+
+    .entry small { color: var(--muted); }
+
+    .entry-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .delete {
+      background: rgba(253, 164, 175, 0.15);
+      color: #ffd5db;
+      border: 1px solid rgba(253, 164, 175, 0.45);
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      border-radius: 8px;
+    }
+
+    .progress-wrap {
+      margin-top: 4px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 999px;
+      height: 10px;
+      overflow: hidden;
+    }
+
+    .progress {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--accent-2), var(--ok));
+      transition: width 0.25s ease;
+    }
+
+    .empty {
+      color: var(--muted);
+      text-align: center;
+      padding: 24px 8px;
+      border: 1px dashed rgba(174, 183, 222, 0.3);
+      border-radius: 12px;
+    }
+  </style>
 </head>
-
 <body>
+  <main class="app">
+    <section class="card">
+      <h1>Fitness Tracker</h1>
+      <p class="subtitle">Log your workouts, track weekly goal progress, and stay consistent.</p>
+      <div class="top-stats" style="margin-top:16px;">
+        <div class="stat">
+          <div class="label">Workouts This Week</div>
+          <div id="workoutCount" class="value">0</div>
+        </div>
+        <div class="stat">
+          <div class="label">Minutes This Week</div>
+          <div id="minuteCount" class="value">0</div>
+        </div>
+        <div class="stat">
+          <div class="label">Calories Burned</div>
+          <div id="calorieCount" class="value">0</div>
+        </div>
+      </div>
+      <div style="margin-top: 16px;">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;">
+          <strong>Weekly Minutes Goal: <span id="goalValue">150</span> min</strong>
+          <span id="goalPercent" style="color: var(--ok);">0%</span>
+        </div>
+        <div class="progress-wrap"><div id="goalProgress" class="progress"></div></div>
+      </div>
+    </section>
 
-<div class="container">
+    <section class="layout">
+      <article class="card">
+        <h2>Add Workout</h2>
+        <form id="workoutForm">
+          <label>
+            Workout type
+            <select id="type" required>
+              <option value="Cardio">Cardio</option>
+              <option value="Strength">Strength</option>
+              <option value="Yoga">Yoga</option>
+              <option value="Cycling">Cycling</option>
+              <option value="Running">Running</option>
+              <option value="Swimming">Swimming</option>
+            </select>
+          </label>
+          <label>
+            Duration (minutes)
+            <input id="minutes" type="number" min="1" required />
+          </label>
+          <label>
+            Calories burned
+            <input id="calories" type="number" min="0" required />
+          </label>
+          <label>
+            Date
+            <input id="date" type="date" required />
+          </label>
+          <button type="submit">Save Workout</button>
+        </form>
 
-<h1>Anchit Vachher</h1>
-<h2>Business Analytics | Sales | Growth</h2>
+        <hr style="border: none; border-top: 1px solid rgba(174,183,222,0.2); margin: 18px 0;" />
 
-<div class="section">
-<h3>About Me</h3>
-<p>
-After completing my Master’s in Business Analytics at La Trobe University, I broadened my global perspective through solo travel across the Asia Pacific and Europe. These experiences strengthened my curiosity, adaptability, and resilience — qualities reinforced through marathon training and endurance sport.
-</p>
+        <h3>Goal Settings</h3>
+        <form id="goalForm">
+          <label>
+            Weekly minutes goal
+            <input id="goalInput" type="number" min="1" value="150" required />
+          </label>
+          <button type="submit">Update Goal</button>
+        </form>
+      </article>
 
-<p>
-With a commerce background and strong interest in technology, I thrive on solving business problems, building meaningful relationships, and contributing to sustainable growth.
-</p>
-</div>
+      <article class="card">
+        <div class="list-head">
+          <h2>Workout History</h2>
+          <label style="margin:0;">
+            Filter
+            <select id="filterType">
+              <option value="All">All</option>
+              <option value="Cardio">Cardio</option>
+              <option value="Strength">Strength</option>
+              <option value="Yoga">Yoga</option>
+              <option value="Cycling">Cycling</option>
+              <option value="Running">Running</option>
+              <option value="Swimming">Swimming</option>
+            </select>
+          </label>
+        </div>
+        <div id="entryList" class="entries"></div>
+      </article>
+    </section>
+  </main>
 
-<div class="section">
-<h3>Get In Touch</h3>
-<p>Email: <a href="mailto:anchitvachher98@gmail.com">anchitvachher98@gmail.com</a></p>
-<p>Australia: <a href="tel:+61420993224">+61 420 993 224</a></p>
-<p>India: <a href="tel:+919873344299">+91 987 33 44 299</a></p>
+  <script>
+    const STORAGE_KEY = 'fitness-tracker-workouts-v1';
+    const GOAL_KEY = 'fitness-tracker-goal-v1';
 
-<p>
-LinkedIn: 
-<a href="https://www.linkedin.com/in/anchitvachher98/" target="_blank">
-linkedin.com/in/anchitvachher98
-</a>
-</p>
+    const workoutForm = document.getElementById('workoutForm');
+    const goalForm = document.getElementById('goalForm');
+    const filterType = document.getElementById('filterType');
+    const entryList = document.getElementById('entryList');
 
-<p>
-X (Twitter): 
-<a href="https://x.com/anchitvachher98" target="_blank">
-x.com/anchitvachher98
-</a>
-</p>
+    const workoutCount = document.getElementById('workoutCount');
+    const minuteCount = document.getElementById('minuteCount');
+    const calorieCount = document.getElementById('calorieCount');
+    const goalValue = document.getElementById('goalValue');
+    const goalInput = document.getElementById('goalInput');
+    const goalPercent = document.getElementById('goalPercent');
+    const goalProgress = document.getElementById('goalProgress');
 
-<a class="button" href="mailto:anchitvachher98@gmail.com">
-Feel Free to Reach Out
-</a>
+    const dateInput = document.getElementById('date');
+    dateInput.valueAsDate = new Date();
 
-</div>
+    const loadWorkouts = () => JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    const saveWorkouts = (workouts) => localStorage.setItem(STORAGE_KEY, JSON.stringify(workouts));
 
-<div class="footer">
-© 2026 Anchit Vachher
-</div>
+    const loadGoal = () => Number(localStorage.getItem(GOAL_KEY)) || 150;
+    const saveGoal = (goal) => localStorage.setItem(GOAL_KEY, String(goal));
 
-</div>
+    const isDateInCurrentWeek = (dateString) => {
+      const date = new Date(`${dateString}T00:00:00`);
+      const today = new Date();
+      const day = today.getDay();
+      const diffToMonday = (day + 6) % 7;
 
+      const start = new Date(today);
+      start.setDate(today.getDate() - diffToMonday);
+      start.setHours(0, 0, 0, 0);
+
+      const end = new Date(start);
+      end.setDate(start.getDate() + 7);
+
+      return date >= start && date < end;
+    };
+
+    const renderStats = (workouts) => {
+      const thisWeek = workouts.filter((entry) => isDateInCurrentWeek(entry.date));
+
+      const totalWorkouts = thisWeek.length;
+      const totalMinutes = thisWeek.reduce((sum, entry) => sum + entry.minutes, 0);
+      const totalCalories = thisWeek.reduce((sum, entry) => sum + entry.calories, 0);
+
+      workoutCount.textContent = totalWorkouts;
+      minuteCount.textContent = totalMinutes;
+      calorieCount.textContent = totalCalories;
+
+      const goal = loadGoal();
+      goalValue.textContent = goal;
+      goalInput.value = goal;
+
+      const percent = Math.min(100, Math.round((totalMinutes / goal) * 100));
+      goalPercent.textContent = `${percent}%`;
+      goalProgress.style.width = `${percent}%`;
+    };
+
+    const renderWorkouts = () => {
+      const workouts = loadWorkouts().sort((a, b) => b.date.localeCompare(a.date));
+      const filter = filterType.value;
+      const visible = filter === 'All' ? workouts : workouts.filter((entry) => entry.type === filter);
+
+      entryList.innerHTML = '';
+
+      if (!visible.length) {
+        entryList.innerHTML = '<div class="empty">No workouts found. Add one to start your streak.</div>';
+      } else {
+        visible.forEach((entry) => {
+          const item = document.createElement('div');
+          item.className = 'entry';
+          item.innerHTML = `
+            <div>
+              <strong>${entry.type}</strong>
+              <div><small>${entry.minutes} min • ${entry.calories} cal • ${entry.date}</small></div>
+            </div>
+            <div class="entry-actions">
+              <button class="delete" data-id="${entry.id}">Delete</button>
+            </div>
+          `;
+          entryList.appendChild(item);
+        });
+      }
+
+      renderStats(workouts);
+    };
+
+    workoutForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const newEntry = {
+        id: crypto.randomUUID(),
+        type: document.getElementById('type').value,
+        minutes: Number(document.getElementById('minutes').value),
+        calories: Number(document.getElementById('calories').value),
+        date: document.getElementById('date').value
+      };
+
+      const workouts = loadWorkouts();
+      workouts.push(newEntry);
+      saveWorkouts(workouts);
+      workoutForm.reset();
+      dateInput.valueAsDate = new Date();
+      renderWorkouts();
+    });
+
+    goalForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const value = Number(goalInput.value);
+      if (value > 0) {
+        saveGoal(value);
+        renderWorkouts();
+      }
+    });
+
+    filterType.addEventListener('change', renderWorkouts);
+
+    entryList.addEventListener('click', (event) => {
+      const button = event.target.closest('.delete');
+      if (!button) return;
+
+      const id = button.dataset.id;
+      const workouts = loadWorkouts().filter((entry) => entry.id !== id);
+      saveWorkouts(workouts);
+      renderWorkouts();
+    });
+
+    renderWorkouts();
+  </script>
 </body>
 </html>
-

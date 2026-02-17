@@ -1,126 +1,629 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Anchit Vachher</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitFlow Tracker</title>
+  <style>
+    :root {
+      --bg: #f4fbf7;
+      --panel: #ffffff;
+      --panel-2: #f2fff9;
+      --text: #173326;
+      --muted: #5d7a6c;
+      --primary: #22c55e;
+      --primary-2: #10b981;
+      --accent: #38bdf8;
+      --danger: #ef4444;
+      --ok: #16a34a;
+      --border: #d5efe0;
+      --shadow: 0 10px 24px rgba(34, 197, 94, 0.12);
+      --radius: 16px;
+    }
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    * { box-sizing: border-box; }
 
-<style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-    color: white;
-    line-height: 1.6;
-}
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background:
+        radial-gradient(circle at 6% 6%, rgba(56, 189, 248, 0.16), transparent 28%),
+        radial-gradient(circle at 95% 15%, rgba(34, 197, 94, 0.12), transparent 30%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 18px;
+    }
 
-.container {
-    max-width: 900px;
-    margin: auto;
-    padding: 60px 20px;
-}
+    .app { max-width: 1200px; margin: 0 auto; display: grid; gap: 14px; }
 
-h1 {
-    font-size: 48px;
-    margin-bottom: 10px;
-}
+    .card {
+      background: linear-gradient(150deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
 
-h2 {
-    font-weight: normal;
-    color: #cccccc;
-    margin-bottom: 40px;
-}
+    h1, h2, h3 { margin: 0 0 10px; }
+    .sub { margin: 0; color: var(--muted); }
 
-.section {
-    background: rgba(255,255,255,0.07);
-    padding: 30px;
-    border-radius: 15px;
-    margin-bottom: 30px;
-}
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-top: 12px; }
+    .stat { background: #f7fffb; border: 1px solid var(--border); border-radius: 12px; padding: 10px; }
+    .stat .k { color: var(--muted); font-size: .84rem; }
+    .stat .v { font-size: 1.4rem; font-weight: 800; margin-top: 5px; }
 
-a {
-    color: #00d4ff;
-    text-decoration: none;
-}
+    .row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
 
-a:hover {
-    text-decoration: underline;
-}
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tab-btn {
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .tab-btn.active { border-color: transparent; background: linear-gradient(135deg, var(--primary), var(--primary-2)); color: white; }
 
-.button {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 14px 30px;
-    background: #00d4ff;
-    color: black;
-    border-radius: 30px;
-    font-weight: bold;
-    text-decoration: none;
-    transition: 0.3s;
-}
+    .tab { display: none; gap: 12px; }
+    .tab.active { display: grid; }
+    .grid-2 { grid-template-columns: 360px 1fr; }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    @media (max-width: 980px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
 
-.button:hover {
-    background: white;
-}
+    form { display: grid; gap: 9px; }
+    label { display: grid; gap: 6px; color: var(--muted); font-size: .9rem; }
+    input, select, textarea, button {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 11px;
+      font-size: .95rem;
+      color: var(--text);
+      background: #fff;
+      font-family: inherit;
+    }
+    input:focus, select:focus, textarea:focus { outline: 2px solid rgba(34, 197, 94, .35); border-color: transparent; }
+    button { cursor: pointer; background: linear-gradient(135deg, var(--primary), var(--primary-2)); color: #fff; border: 0; font-weight: 700; }
 
-.footer {
-    margin-top: 40px;
-    font-size: 14px;
-    color: #aaaaaa;
-}
-</style>
+    .list { display: grid; gap: 9px; }
+    .item { border: 1px solid var(--border); background: #fff; border-radius: 12px; padding: 11px; }
+    .item-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .meta { color: var(--muted); font-size: .85rem; margin-top: 6px; }
+    .danger { background: #fff1f2; color: #b91c1c; border: 1px solid #fecdd3; border-radius: 8px; padding: 6px 10px; font-size: .8rem; }
+
+    .progress-wrap { background: #e8f6ed; border-radius: 999px; height: 10px; overflow: hidden; }
+    .progress { width: 0; height: 100%; background: linear-gradient(90deg, var(--accent), var(--ok)); transition: width .25s ease; }
+
+    .empty { color: var(--muted); text-align: center; border: 1px dashed var(--border); border-radius: 11px; padding: 18px; }
+    .pill { border-radius: 999px; background: #ecfdf3; border: 1px solid #bbf7d0; color: #166534; padding: 3px 8px; font-size: .78rem; }
+
+    .weekday-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+    .weekday { border: 1px solid var(--border); background: #fff; color: var(--text); border-radius: 8px; font-size: .82rem; padding: 7px 3px; cursor: pointer; }
+    .weekday.active { background: #dcfce7; border-color: #86efac; }
+
+    .photo { width: 86px; height: 86px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border); }
+    video { width: 100%; border-radius: 12px; border: 1px solid var(--border); background: #e2e8f0; max-height: 260px; object-fit: cover; }
+  </style>
 </head>
-
 <body>
+  <main class="app">
+    <section class="card">
+      <h1>FitFlow Tracker</h1>
+      <p class="sub">Positive daily tracker for workouts, routines, lifts, habits with reminders, AI meal scan, and Apple Health step sync.</p>
+      <div class="stats">
+        <div class="stat"><div class="k">Workouts This Week</div><div class="v" id="wkWorkouts">0</div></div>
+        <div class="stat"><div class="k">Minutes This Week</div><div class="v" id="wkMinutes">0</div></div>
+        <div class="stat"><div class="k">Calories Burned</div><div class="v" id="wkBurned">0</div></div>
+        <div class="stat"><div class="k">Calories Eaten Today</div><div class="v" id="todayEaten">0</div></div>
+        <div class="stat"><div class="k">Habit Completion Today</div><div class="v" id="habitPct">0%</div></div>
+        <div class="stat"><div class="k">Synced Steps Today</div><div class="v" id="todaySteps">0</div></div>
+      </div>
+      <div class="row" style="margin-top:12px;"><strong>Step Goal: <span id="goalLbl">8000</span></strong><span class="pill" id="stepPct">0%</span></div>
+      <div class="progress-wrap"><div class="progress" id="stepProgress"></div></div>
+    </section>
 
-<div class="container">
+    <section class="card">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="workouts">Workouts</button>
+        <button class="tab-btn" data-tab="routines">Routines</button>
+        <button class="tab-btn" data-tab="strength">Strength</button>
+        <button class="tab-btn" data-tab="habits">Habits + Reminders</button>
+        <button class="tab-btn" data-tab="nutrition">AI Camera Calories</button>
+        <button class="tab-btn" data-tab="steps">Apple Health Steps</button>
+      </div>
+    </section>
 
-<h1>Anchit Vachher</h1>
-<h2>Business Analytics | Sales | Growth</h2>
+    <section id="workouts" class="tab active grid-2">
+      <article class="card">
+        <h2>Add Workout</h2>
+        <form id="workoutForm">
+          <label>Workout Type
+            <select id="workType"><option>Cardio</option><option>Strength</option><option>Yoga</option><option>Cycling</option><option>Running</option><option>Swimming</option></select>
+          </label>
+          <label>Minutes <input id="workMinutes" type="number" min="1" required /></label>
+          <label>Calories Burned <input id="workCalories" type="number" min="0" required /></label>
+          <label>Date <input id="workDate" type="date" required /></label>
+          <button type="submit">Save Workout</button>
+        </form>
+      </article>
+      <article class="card">
+        <div class="row"><h2>Workout History</h2>
+          <label>Filter
+            <select id="workFilter"><option>All</option><option>Cardio</option><option>Strength</option><option>Yoga</option><option>Cycling</option><option>Running</option><option>Swimming</option></select>
+          </label>
+        </div>
+        <div id="workoutList" class="list"></div>
+      </article>
+    </section>
 
-<div class="section">
-<h3>About Me</h3>
-<p>
-After completing my Master’s in Business Analytics at La Trobe University, I broadened my global perspective through solo travel across the Asia Pacific and Europe. These experiences strengthened my curiosity, adaptability, and resilience — qualities reinforced through marathon training and endurance sport.
-</p>
+    <section id="routines" class="tab grid-2">
+      <article class="card">
+        <h2>Create Routine</h2>
+        <form id="routineForm">
+          <label>Routine Name <input id="routineName" required placeholder="Push Day" /></label>
+          <label>Exercises (comma separated)
+            <textarea id="routineExercises" rows="4" required placeholder="Bench Press, OHP, Dips"></textarea>
+          </label>
+          <label>Assign Day
+            <select id="routineDay"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option></select>
+          </label>
+          <button type="submit">Save Routine</button>
+        </form>
+      </article>
+      <article class="card">
+        <h2>Weekly Templates</h2>
+        <div class="weekday-grid" id="weekdayButtons"></div>
+        <div class="list" id="selectedDayRoutines" style="margin-top:10px;"></div>
+      </article>
+    </section>
 
-<p>
-With a commerce background and strong interest in technology, I thrive on solving business problems, building meaningful relationships, and contributing to sustainable growth.
-</p>
-</div>
+    <section id="strength" class="tab grid-2">
+      <article class="card">
+        <h2>Log Lift</h2>
+        <form id="liftForm">
+          <label>Exercise <input id="liftExercise" required placeholder="Bench Press" /></label>
+          <label>Weight (kg) <input id="liftWeight" type="number" min="0" step="0.5" required /></label>
+          <label>Reps <input id="liftReps" type="number" min="1" required /></label>
+          <label>Date <input id="liftDate" type="date" required /></label>
+          <button type="submit">Save Lift</button>
+        </form>
+      </article>
+      <article class="card">
+        <h2>Per Exercise Progress</h2>
+        <div id="liftSummary" class="list"></div>
+      </article>
+    </section>
 
-<div class="section">
-<h3>Get In Touch</h3>
-<p>Email: <a href="mailto:anchitvachher98@gmail.com">anchitvachher98@gmail.com</a></p>
-<p>Australia: <a href="tel:+61420993224">+61 420 993 224</a></p>
-<p>India: <a href="tel:+919873344299">+91 987 33 44 299</a></p>
+    <section id="habits" class="tab grid-2">
+      <article class="card">
+        <h2>Add Habit + Reminder</h2>
+        <form id="habitForm">
+          <label>Habit Name <input id="habitName" required placeholder="Drink 3L water" /></label>
+          <label>Reminder Time (optional) <input id="habitReminder" type="time" /></label>
+          <button type="submit">Add Habit</button>
+        </form>
+        <p class="sub" style="margin-top:8px;">Enable browser notifications to receive reminders while this app is open.</p>
+        <button id="enableNotifs" type="button" style="margin-top:8px;">Enable Reminders</button>
+      </article>
+      <article class="card">
+        <h2>Today's Habits</h2>
+        <div id="habitList" class="list"></div>
+      </article>
+    </section>
 
-<p>
-LinkedIn: 
-<a href="https://www.linkedin.com/in/anchitvachher98/" target="_blank">
-linkedin.com/in/anchitvachher98
-</a>
-</p>
+    <section id="nutrition" class="tab grid-2">
+      <article class="card">
+        <h2>Camera Scan + AI Calories</h2>
+        <video id="camera" autoplay playsinline muted></video>
+        <canvas id="snapCanvas" style="display:none;"></canvas>
+        <div class="row" style="margin-top:8px;">
+          <button type="button" id="startCamera">Open Camera</button>
+          <button type="button" id="captureMeal">Scan Meal</button>
+        </div>
+        <form id="mealForm" style="margin-top:8px;">
+          <label>Detected Meal <input id="mealText" required placeholder="Auto-filled after scan" /></label>
+          <label>Estimated Calories <input id="mealCalories" type="number" min="0" required /></label>
+          <button type="submit">Save Meal</button>
+        </form>
+      </article>
+      <article class="card">
+        <h2>Meal Log</h2>
+        <div id="mealList" class="list"></div>
+      </article>
+    </section>
 
-<p>
-X (Twitter): 
-<a href="https://x.com/anchitvachher98" target="_blank">
-x.com/anchitvachher98
-</a>
-</p>
+    <section id="steps" class="tab grid-3">
+      <article class="card">
+        <h2>Step Goal</h2>
+        <form id="stepGoalForm">
+          <label>Daily Step Goal <input id="stepGoalInput" type="number" min="1000" step="500" required /></label>
+          <button type="submit">Update Goal</button>
+        </form>
+      </article>
+      <article class="card">
+        <h2>Apple Health Auto Sync</h2>
+        <form id="healthBridgeForm">
+          <label>Bridge Endpoint URL (returns <code>{"steps": number}</code>)
+            <input id="healthBridgeUrl" placeholder="https://your-bridge.example.com/apple-health/steps/today" />
+          </label>
+          <button type="submit">Save Bridge URL</button>
+        </form>
+        <div class="row" style="margin-top:8px;">
+          <button type="button" id="syncStepsNow">Sync Now</button>
+          <span class="pill" id="syncStatus">Not synced</span>
+        </div>
+        <p class="sub" style="margin-top:8px;">No manual step logging required. App syncs automatically every 5 minutes when bridge URL is set.</p>
+      </article>
+      <article class="card">
+        <h2>Progress</h2>
+        <div class="row"><strong id="stepDisplay">0 / 8000</strong><span class="pill" id="stepBadge">0%</span></div>
+        <div class="progress-wrap" style="margin-top:8px;"><div class="progress" id="stepProgress2"></div></div>
+      </article>
+    </section>
+  </main>
 
-<a class="button" href="mailto:anchitvachher98@gmail.com">
-Feel Free to Reach Out
-</a>
+  <script>
+    const KEY = {
+      workouts: 'fit-workouts-v3',
+      routines: 'fit-routines-v3',
+      lifts: 'fit-lifts-v3',
+      habits: 'fit-habits-v3',
+      meals: 'fit-meals-v3',
+      steps: 'fit-steps-v3',
+      stepGoal: 'fit-step-goal-v3',
+      bridgeUrl: 'fit-apple-health-bridge-url-v3'
+    };
 
-</div>
+    const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const $ = (id) => document.getElementById(id);
+    const today = () => new Date().toISOString().slice(0, 10);
+    const load = (k, d) => JSON.parse(localStorage.getItem(k) || JSON.stringify(d));
+    const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+    const uid = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
-<div class="footer">
-© 2026 Anchit Vachher
-</div>
+    $('workDate').value = today();
+    $('liftDate').value = today();
 
-</div>
+    document.querySelectorAll('.tab-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.tab').forEach((tab) => tab.classList.remove('active'));
+        $(btn.dataset.tab).classList.add('active');
+      });
+    });
 
+    const inThisWeek = (dateString) => {
+      const d = new Date(`${dateString}T00:00:00`);
+      const now = new Date();
+      const diff = (now.getDay() + 6) % 7;
+      const start = new Date(now);
+      start.setDate(now.getDate() - diff);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(start);
+      end.setDate(start.getDate() + 7);
+      return d >= start && d < end;
+    };
+
+    const aiEstimateFromImage = (ctx, w, h) => {
+      const pixels = ctx.getImageData(0, 0, w, h).data;
+      let r = 0, g = 0, b = 0;
+      for (let i = 0; i < pixels.length; i += 40) {
+        r += pixels[i]; g += pixels[i + 1]; b += pixels[i + 2];
+      }
+      const total = r + g + b || 1;
+      const greenRatio = g / total;
+      const redRatio = r / total;
+      if (greenRatio > 0.37) return { meal: 'Salad / Veg Bowl', calories: 280 };
+      if (redRatio > 0.37) return { meal: 'Fried / Grilled Meal', calories: 620 };
+      return { meal: 'Mixed Meal', calories: 460 };
+    };
+
+    const updateStepsUi = () => {
+      const stepsObj = load(KEY.steps, { date: today(), count: 0, syncedAt: '' });
+      const goal = Number(localStorage.getItem(KEY.stepGoal) || 8000);
+      const count = stepsObj.date === today() ? stepsObj.count : 0;
+      const pct = Math.min(100, Math.round((count / goal) * 100));
+      $('todaySteps').textContent = count;
+      $('goalLbl').textContent = goal;
+      $('stepPct').textContent = `${pct}%`;
+      $('stepDisplay').textContent = `${count} / ${goal}`;
+      $('stepBadge').textContent = `${pct}%`;
+      $('stepProgress').style.width = `${pct}%`;
+      $('stepProgress2').style.width = `${pct}%`;
+      $('stepGoalInput').value = goal;
+      $('syncStatus').textContent = stepsObj.syncedAt ? `Synced ${stepsObj.syncedAt}` : 'Not synced';
+    };
+
+    const syncAppleHealthSteps = async () => {
+      const bridgeUrl = localStorage.getItem(KEY.bridgeUrl) || '';
+      if (!bridgeUrl) {
+        $('syncStatus').textContent = 'Bridge URL not set';
+        return;
+      }
+
+      try {
+        const res = await fetch(bridgeUrl, { method: 'GET' });
+        if (!res.ok) throw new Error('sync failed');
+        const data = await res.json();
+        const steps = Number(data.steps || 0);
+        save(KEY.steps, { date: today(), count: steps, syncedAt: new Date().toLocaleTimeString() });
+        updateStepsUi();
+      } catch {
+        $('syncStatus').textContent = 'Sync failed';
+      }
+    };
+
+    const renderDashboard = () => {
+      const workouts = load(KEY.workouts, []);
+      const meals = load(KEY.meals, []);
+      const habits = load(KEY.habits, []);
+      const week = workouts.filter((w) => inThisWeek(w.date));
+      $('wkWorkouts').textContent = week.length;
+      $('wkMinutes').textContent = week.reduce((s, x) => s + x.minutes, 0);
+      $('wkBurned').textContent = week.reduce((s, x) => s + x.calories, 0);
+      $('todayEaten').textContent = meals.filter((m) => m.date === today()).reduce((s, x) => s + x.calories, 0);
+      const done = habits.filter((h) => (h.doneDates || []).includes(today())).length;
+      $('habitPct').textContent = habits.length ? `${Math.round((done / habits.length) * 100)}%` : '0%';
+      updateStepsUi();
+    };
+
+    const renderWorkouts = () => {
+      const filter = $('workFilter').value;
+      const list = $('workoutList');
+      const all = load(KEY.workouts, []).sort((a, b) => b.date.localeCompare(a.date));
+      const rows = filter === 'All' ? all : all.filter((x) => x.type === filter);
+      list.innerHTML = '';
+      if (!rows.length) return list.innerHTML = '<div class="empty">No workouts yet.</div>';
+      rows.forEach((w) => {
+        const el = document.createElement('div');
+        el.className = 'item';
+        el.innerHTML = `<div class="item-head"><strong>${w.type}</strong><button class="danger" data-del-work="${w.id}">Delete</button></div><div class="meta">${w.minutes} min • ${w.calories} cal • ${w.date}</div>`;
+        list.appendChild(el);
+      });
+    };
+
+    const renderRoutines = () => {
+      const routines = load(KEY.routines, []);
+      const holder = $('weekdayButtons');
+      const selected = holder.dataset.day || 'Monday';
+      holder.innerHTML = '';
+      DAYS.forEach((d) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `weekday ${selected === d ? 'active' : ''}`;
+        btn.textContent = d.slice(0, 3);
+        btn.onclick = () => { holder.dataset.day = d; renderRoutines(); };
+        holder.appendChild(btn);
+      });
+
+      const rows = routines.filter((r) => r.day === selected);
+      const box = $('selectedDayRoutines');
+      box.innerHTML = `<h3 style="margin:0;">${selected}</h3>`;
+      if (!rows.length) return box.innerHTML += '<div class="empty">No routine for this day.</div>';
+      rows.forEach((r) => {
+        const el = document.createElement('div');
+        el.className = 'item';
+        el.innerHTML = `<div class="item-head"><strong>${r.name}</strong><button class="danger" data-del-routine="${r.id}">Delete</button></div><div class="meta">${r.exercises.join(', ')}</div>`;
+        box.appendChild(el);
+      });
+    };
+
+    const renderLifts = () => {
+      const lifts = load(KEY.lifts, []);
+      const box = $('liftSummary');
+      box.innerHTML = '';
+      if (!lifts.length) return box.innerHTML = '<div class="empty">No lifts yet.</div>';
+      const by = new Map();
+      lifts.forEach((l) => { if (!by.has(l.exercise)) by.set(l.exercise, []); by.get(l.exercise).push(l); });
+      [...by.entries()].sort((a, b) => a[0].localeCompare(b[0])).forEach(([name, rows]) => {
+        rows.sort((a, b) => b.date.localeCompare(a.date));
+        const last = rows[0];
+        const high = rows.reduce((m, x) => x.weight > m.weight ? x : m, rows[0]);
+        const el = document.createElement('div');
+        el.className = 'item';
+        el.innerHTML = `<div class="item-head"><strong>${name}</strong><button class="danger" data-del-lift="${name}">Delete Exercise Logs</button></div><div class="meta">Last: ${last.weight} kg × ${last.reps} (${last.date})</div><div class="meta">Highest: ${high.weight} kg × ${high.reps} (${high.date})</div>`;
+        box.appendChild(el);
+      });
+    };
+
+    const renderHabits = () => {
+      const habits = load(KEY.habits, []);
+      const box = $('habitList');
+      box.innerHTML = '';
+      if (!habits.length) return box.innerHTML = '<div class="empty">No habits yet.</div>';
+      habits.forEach((h) => {
+        const done = (h.doneDates || []).includes(today());
+        const reminderTxt = h.reminder ? `Reminder: ${h.reminder}` : 'No reminder';
+        const el = document.createElement('div');
+        el.className = 'item';
+        el.innerHTML = `<div class="item-head"><strong>${h.name}</strong><div><button class="tab-btn ${done ? 'active' : ''}" data-toggle-habit="${h.id}">${done ? 'Done' : 'Mark done'}</button> <button class="danger" data-del-habit="${h.id}">Delete</button></div></div><div class="meta">${reminderTxt}</div>`;
+        box.appendChild(el);
+      });
+    };
+
+    const renderMeals = () => {
+      const meals = load(KEY.meals, []).sort((a,b) => b.date.localeCompare(a.date));
+      const box = $('mealList');
+      box.innerHTML = '';
+      if (!meals.length) return box.innerHTML = '<div class="empty">No meal scans yet.</div>';
+      meals.forEach((m) => {
+        const img = m.photo ? `<img class="photo" src="${m.photo}" alt="meal scan">` : '';
+        const el = document.createElement('div');
+        el.className = 'item';
+        el.innerHTML = `<div class="item-head"><strong>${m.text}</strong><button class="danger" data-del-meal="${m.id}">Delete</button></div><div class="meta">${m.calories} cal • ${m.date}</div>${img}`;
+        box.appendChild(el);
+      });
+    };
+
+    $('workoutForm').onsubmit = (e) => {
+      e.preventDefault();
+      const all = load(KEY.workouts, []);
+      all.push({ id: uid(), type: $('workType').value, minutes: Number($('workMinutes').value), calories: Number($('workCalories').value), date: $('workDate').value });
+      save(KEY.workouts, all);
+      e.target.reset();
+      $('workDate').value = today();
+      renderAll();
+    };
+
+    $('workFilter').onchange = renderWorkouts;
+    $('workoutList').onclick = (e) => {
+      const id = e.target.dataset.delWork;
+      if (!id) return;
+      save(KEY.workouts, load(KEY.workouts, []).filter((x) => x.id !== id));
+      renderAll();
+    };
+
+    $('routineForm').onsubmit = (e) => {
+      e.preventDefault();
+      const rows = load(KEY.routines, []);
+      rows.push({ id: uid(), name: $('routineName').value.trim(), exercises: $('routineExercises').value.split(',').map((x) => x.trim()).filter(Boolean), day: $('routineDay').value });
+      save(KEY.routines, rows);
+      e.target.reset();
+      renderRoutines();
+    };
+
+    $('selectedDayRoutines').onclick = (e) => {
+      const id = e.target.dataset.delRoutine;
+      if (!id) return;
+      save(KEY.routines, load(KEY.routines, []).filter((x) => x.id !== id));
+      renderRoutines();
+    };
+
+    $('liftForm').onsubmit = (e) => {
+      e.preventDefault();
+      const rows = load(KEY.lifts, []);
+      rows.push({ id: uid(), exercise: $('liftExercise').value.trim(), weight: Number($('liftWeight').value), reps: Number($('liftReps').value), date: $('liftDate').value });
+      save(KEY.lifts, rows);
+      e.target.reset();
+      $('liftDate').value = today();
+      renderLifts();
+    };
+
+    $('liftSummary').onclick = (e) => {
+      const ex = e.target.dataset.delLift;
+      if (!ex) return;
+      save(KEY.lifts, load(KEY.lifts, []).filter((x) => x.exercise !== ex));
+      renderLifts();
+    };
+
+    $('enableNotifs').onclick = async () => {
+      if (!('Notification' in window)) return alert('Notifications not supported in this browser');
+      const perm = await Notification.requestPermission();
+      alert(perm === 'granted' ? 'Reminder notifications enabled.' : 'Notification permission not granted.');
+    };
+
+    $('habitForm').onsubmit = (e) => {
+      e.preventDefault();
+      const rows = load(KEY.habits, []);
+      rows.push({ id: uid(), name: $('habitName').value.trim(), reminder: $('habitReminder').value || '', doneDates: [] });
+      save(KEY.habits, rows);
+      e.target.reset();
+      renderHabits();
+      renderDashboard();
+    };
+
+    $('habitList').onclick = (e) => {
+      const tid = e.target.dataset.toggleHabit;
+      const did = e.target.dataset.delHabit;
+      const rows = load(KEY.habits, []);
+      if (tid) {
+        const h = rows.find((x) => x.id === tid);
+        if (h) {
+          h.doneDates = h.doneDates || [];
+          if (h.doneDates.includes(today())) h.doneDates = h.doneDates.filter((d) => d !== today());
+          else h.doneDates.push(today());
+        }
+      }
+      if (did) save(KEY.habits, rows.filter((x) => x.id !== did));
+      else save(KEY.habits, rows);
+      renderHabits();
+      renderDashboard();
+    };
+
+    let camStream = null;
+    $('startCamera').onclick = async () => {
+      try {
+        camStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+        $('camera').srcObject = camStream;
+      } catch {
+        alert('Unable to open camera. Please allow camera access.');
+      }
+    };
+
+    $('captureMeal').onclick = () => {
+      const video = $('camera');
+      if (!video.videoWidth) return alert('Open camera first');
+      const canvas = $('snapCanvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const ai = aiEstimateFromImage(ctx, canvas.width, canvas.height);
+      $('mealText').value = ai.meal;
+      $('mealCalories').value = ai.calories;
+    };
+
+    $('mealForm').onsubmit = (e) => {
+      e.preventDefault();
+      const rows = load(KEY.meals, []);
+      const photo = $('snapCanvas').toDataURL('image/jpeg', 0.85);
+      rows.push({ id: uid(), text: $('mealText').value.trim(), calories: Number($('mealCalories').value), date: today(), photo });
+      save(KEY.meals, rows);
+      e.target.reset();
+      renderMeals();
+      renderDashboard();
+    };
+
+    $('mealList').onclick = (e) => {
+      const id = e.target.dataset.delMeal;
+      if (!id) return;
+      save(KEY.meals, load(KEY.meals, []).filter((x) => x.id !== id));
+      renderMeals();
+      renderDashboard();
+    };
+
+    $('stepGoalForm').onsubmit = (e) => {
+      e.preventDefault();
+      localStorage.setItem(KEY.stepGoal, String(Number($('stepGoalInput').value)));
+      updateStepsUi();
+    };
+
+    $('healthBridgeForm').onsubmit = (e) => {
+      e.preventDefault();
+      localStorage.setItem(KEY.bridgeUrl, $('healthBridgeUrl').value.trim());
+      $('syncStatus').textContent = 'Bridge URL saved';
+    };
+
+    $('syncStepsNow').onclick = syncAppleHealthSteps;
+
+    const reminderTick = () => {
+      if (!('Notification' in window) || Notification.permission !== 'granted') return;
+      const hhmm = new Date().toTimeString().slice(0, 5);
+      load(KEY.habits, []).forEach((h) => {
+        if (h.reminder === hhmm && !((h.doneDates || []).includes(today()))) {
+          new Notification('Habit reminder', { body: `Time for: ${h.name}` });
+        }
+      });
+    };
+
+    const renderAll = () => {
+      $('healthBridgeUrl').value = localStorage.getItem(KEY.bridgeUrl) || '';
+      renderWorkouts();
+      renderRoutines();
+      renderLifts();
+      renderHabits();
+      renderMeals();
+      renderDashboard();
+    };
+
+    renderAll();
+    setInterval(reminderTick, 30 * 1000);
+    setInterval(() => {
+      if (localStorage.getItem(KEY.bridgeUrl)) syncAppleHealthSteps();
+    }, 5 * 60 * 1000);
+  </script>
 </body>
 </html>
-
